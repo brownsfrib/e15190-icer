@@ -1,0 +1,26 @@
+** Neutron Wall time offset
+*Detector    offset (ns)   
+NWBbar01   -0.114539
+NWBbar02   -0.703537	 
+NWBbar03   0.289979	 
+NWBbar04   -0.079809	 
+NWBbar05   -0.963203	 
+NWBbar06   -1.80066	 
+NWBbar07   -1.52523	 
+NWBbar08   -3.32494	 
+NWBbar09   -0.6375	 
+NWBbar10    -2.33832	 
+NWBbar11    -2.59162	 
+NWBbar12    0		 
+NWBbar13    5.1503	 
+NWBbar14    3.34436
+NWBbar15    1.64739	 
+NWBbar16    -0.0834318   
+NWBbar17    -0.416886	 
+NWBbar18    0.609592	 
+NWBbar19    1.42971	 
+NWBbar20    0.209149	 
+NWBbar21    -0.542844	 
+NWBbar22    1.8956	 
+NWBbar23    -0.00829184  
+NWBbar24    11.0287	 

@@ -1,0 +1,203 @@
+***** Configuration file for HiRAEVT *****
+* For any question please refer to Daniele Dell'Aquila (dellaqui@nscl.msu.edu)
+***** version 1.0 ************************
+
+** Location of HiRAEVT folders ***************************
+set HiRAEVT_DIR "/projects/e15190/HiRAEVT" *the program main directory has to be written without the last "/"
+set HiRAEVTUNPACKER_SUMMARY_PATH "/mnt/analysis/e15190/HiRAEVTUnpacker_summaries/"
+set HiRAEVTUNPACKER_ROOT_FILE_PATH "/mnt/analysis/e15190/HiRAEVTUnpacker_rootfiles/"
+set HiRAEVTMAPPER_SUMMARY_PATH "/mnt/analysis/e15190/HiRAEVTMapper_summaries/"
+set HiRAEVTMAPPER_ROOT_FILE_PATH "/mnt/analysis/e15190/HiRAEVTMapper_rootfiles/"
+set ANALYSISFRAMEWORK_ROOT_FILE_PATH "${OUTPUT_DIR}/" *** output directory
+**********************************************************
+
+** General experiment setup ******************************
+set EXPERIMENT_NAME "15190"
+set EXPERIMENT_TITLE "NSCL experiment 15190"
+set MERGED_DATA "true"
+*set EVENT_FILE_PATH "/mnt/misc/daqevents-ro/e15190_2/experiment/"
+**********************************************************
+
+** Run range *********************************************
+FIRST_RUN=2000
+LAST_RUN=10000
+**********************************************************
+
+** Define different evt file path for group of runs ******
+set EVENT_FILE_PATH --run=2000-3074 "/mnt/misc/daqevents-ro/e15190/experiment/"
+set EVENT_FILE_PATH --run=3075-6000 "/mnt/misc/daqevents-ro/e15190_2/experiment/"
+**********************************************************
+
+** DAQ coniguration **************************************
+set DAQ_CONFIG --run=2000-2148 "/projects/e15190/HiRAEVT/input-files/DAQConfig_e15190_BeforeRun2149.daq"
+set DAQ_CONFIG --run=2149-6000 "/projects/e15190/HiRAEVT/input-files/DAQConfig_e15190.daq"
+**********************************************************
+
+** Pedestal suppression **********************************
+set PEDESTAL_VALUES --run=2000-2986 "/projects/e15190/HiRAEVT/input-files/PedestalValues_e15190_ExpStart.ped"
+set PEDESTAL_VALUES --run=2987-4013 "/projects/e15190/HiRAEVT/input-files/PedestalValues_e15190_2987.ped"
+set PEDESTAL_VALUES --run=4014-4020 "/projects/e15190/HiRAEVT/input-files/PedestalValues_e15190_4014.ped"
+set PEDESTAL_VALUES --run=4021-4187 "/projects/e15190/HiRAEVT/input-files/PedestalValues_e15190_4021.ped"
+set PEDESTAL_VALUES --run=4188-4328 "/projects/e15190/HiRAEVT/input-files/PedestalValues_e15190_4188.ped"
+set PEDESTAL_VALUES --run=4329-6000 "/projects/e15190/HiRAEVT/input-files/PedestalValues_e15190_4329.ped"
+**********************************************************
+
+** Channel mapping ***************************************
+set CHANNEL_MAPPING --run=2000-2056 "/projects/e15190/HiRAEVT/input-files/Mapping_e15190_BeforeRun2057.map"
+set CHANNEL_MAPPING --run=2057-4020 "/projects/e15190/HiRAEVT/input-files/Mapping_e15190.map"
+set CHANNEL_MAPPING --run=4021-6000 "/projects/e15190/HiRAEVT/input-files/Mapping_e15190_AfterRun4020.map"
+**********************************************************
+
+** Analysis Framework Stuff ******************************
+
+** Detector(s) to Analyze ********************************
+** set DETECTOR_TO_ANALYZE "NWB-NWA-VW-FA"
+set DETECTOR_TO_ANALYZE "NWB-NWA-VW-FA-uBall-TDC-TS"
+
+set EXPERIMENT_INFO --run=2000-2005 --run=2040-2044 --run=2056-2080 exclude=2073 --run=2084-2106 --run=2710-2721 --run= 2784-2800 --exclude=2790-2794 -beam="40Ca" -energy="140" -target="124Sn"
+set EXPERIMENT_INFO --run=2006,2007,2038,2039 -beam="40Ca" -energy="39" -target="124Sn"
+set EXPERIMENT_INFO --run=2474-2483 --run=2529-2546 --run=2664-2668 --run=2699-2705 -beam="40Ca" -energy="56" -target="124Sn"
+set EXPERIMENT_INFO --run=4007-4020 --exclude=4015-4017 --run=4042-4078 --run=4142-4150 --run=4168,4170,4171,4172,4174 --run=4190-4201 --run=4266-4300 -beam="48Ca" -energy="140" -target="124Sn"
+set EXPERIMENT_INFO --run=4333-4380 --exclude=4335 --run=4511-4541 --run=4621-4640 -beam="48Ca" -energy="56" -target="124Sn"
+set EXPERIMENT_INFO --run=2107-2114 --run=2201-2264 --exclude=2256-2258 --run=2614-2631 --run=2750-2767 --run=2816-2821 --exclude=2820 --run=2830-2846 -beam="40Ca" -energy="140" -target="112Sn"
+set EXPERIMENT_INFO --run=2281-2331 --exclude=2284,2312,2313 --run=2357-2376 --run=2417-2452 --exclude=2425,2429,2433,2443,2449 --run=2676-2679 --run=2684,2685 -beam="40Ca" -energy="56" -target="112Sn"
+set EXPERIMENT_INFO --run=4125-4132 --run=4154,4156,4180 --run=4203-4209 --run=4247-4253 --run=4302-4306 -beam="48Ca" -energy="140" -target="112Sn"
+set EXPERIMENT_INFO --run=4422-4424 --run=4448-4464 --run=4593=4605 -beam="48Ca" -energy="56" -target="112Sn"
+set EXPERIMENT_INFO --run=2115-2200 --exclude=2129,2149,2169 --run=2266-2280 --exclude=2271 --run=2565-2611 --exclude=2590 --run=2632-2656 --run=2769-2775 --run=2809-2814 --run=2848-2870 -beam="40Ca" -energy="140" -target="58Ni"
+set EXPERIMENT_INFO --run=2333-2354 --run=2378-2397 --run=2485-2510 --run=2686-2697 -beam="40Ca" -energy="56" -target="58Ni"
+set EXPERIMENT_INFO --run=4136-4141 --run=4158,4159 --run=4176,4178 --run=4212-4219 --run=4255-4264 --run=4308-4313 -beam="48Ca" -energy="140" -target="58Ni"
+set EXPERIMENT_INFO --run=4426 --run=4495-4509 --run=4607-4619 -beam="48Ca" -energy="56" -target="58Ni"
+set EXPERIMENT_INFO --run=2512-2527 --run=2547-2559 --exclude=2553 --run=2670-2675 -beam="40Ca" -energy="56" -target="64Ni"
+set EXPERIMENT_INFO --run=2265 --run=2723-2745 --run=2777-2782 --run=2802-2807 -beam="40Ca" -energy="140" -target="64Ni"
+set EXPERIMENT_INFO --run=4023-4032 --run=4082-4123 --run=4162-4166 --exclude=4165 --run=4224-4245 --run=4315-4327 -beam="48Ca" -energy="140" -target="64Ni"
+set EXPERIMENT_INFO --run=4383-4414 --exclude=4400 --run=4466-4493 --run=4543-4573 --run=4642-4661 -beam="48Ca" -energy="56" -target="64Ni"
+set EXPERIMENT_INFO --run=2008-2037 -beam="40Ca" -energy="39" -target="CH2"
+set EXPERIMENT_INFO --run=2825-2829 -beam="40Ca" -energy="140" -target="CH2"
+set EXPERIMENT_INFO --run=4000-4005 --run=4021,4022 -beam="48Ca" -energy="140" -target="CH2"
+set EXPERIMENT_INFO --run=4039,4040,4332 --run=4585-4589 -beam="48Ca" -energy="56" -target="CH2"
+set JUNK_RUN --run=2056-2065 --run=2085-2089 --exclude=2088 --run=2012,2095,2096,2098,2908,2479,2482,2484 --run=2124,2153,2154 --run=2165-2168 --exclude=2166 --run=2189,2190,2201,2202,2203 --run=2212,2213,2229,2332,2399,2420,2434,2435,2444,2457,2459 --run=2286-2288
+set JUNK_RUN --run=2490,2496,2503,2504,2505,2567,2589,2657,2762,2771,2794,2852,2869,4808 --run=2680-2683 --run=4006,4009,4010,4183 --run=4415-4425 --exclude=4422,4424 --run=4221-4223 --run=4211,4135,3075,3015,3016,3017,2988 --run=4447,4576 --run=2943-2954 --run=2896
+set JUNK_RUN --run=2816 --run=2660,2661,2511
+
+** Neutron Wall Position *********************************
+set NWA_POSITION_CALIBRATION --run=2000-6000 "${CALIBRATIONS_DIR}/NWA_Position_Calibration_run3014.dat"
+set NWB_POSITION_CALIBRATION --run=2000-3013 "${CALIBRATIONS_DIR}/NWB_Position_Calibration_run3014_4621_4640.dat"
+set NWB_POSITION_CALIBRATION --run=3014-3014 "${CALIBRATIONS_DIR}/NWB_Position_Calibration_run3014.dat"
+set NWB_POSITION_CALIBRATION --run=3015-6000 "${CALIBRATIONS_DIR}/NWB_Position_Calibration_run3014_4621_4640.dat"
+** Neutron Wall Time Offset ******************************
+set NWA_TIMEOFFSET_CALIBRATION --run=2000-6000 "${CALIBRATIONS_DIR}/NWA_Time_Offset_run3014_4621_4640.dat"
+set NWB_TIMEOFFSET_CALIBRATION --run=2000-6000 "${CALIBRATIONS_DIR}/NWB_Time_Offset_run3013_4621_4640.dat"
+** Neutron Wall Gain Matching ****************************
+set NWA_GAIN_MATCHING_CALIBRATION --run=2000-6000 "${CALIBRATIONS_DIR}/NWA_GainMatching_Co60.dat"
+set NWB_GAIN_MATCHING_CALIBRATION --run=2000-6000 "${CALIBRATIONS_DIR}/NWB_GainMatching_Co60.dat"
+** Neutron Pulse Height Calibration **********************
+set NWA_PULSEHEIGHT_CALIBRATION --run=2000-6000 "${CALIBRATIONS_DIR}/NWA_PulseHeightCalibration.dat"
+set NWB_PULSEHEIGHT_CALIBRATION --run=2000-6000 "${CALIBRATIONS_DIR}/NWB_PulseHeightCalibration.dat"
+** Neutron Wall Geometry *********************************
+set NWA_GEOMETRY --run=2000-6000 "${CALIBRATIONS_DIR}/NWA_Geometry.dat"
+set NWB_GEOMETRY --run=2000-6000 "${CALIBRATIONS_DIR}/NWB_Geometry.dat"
+** Neutron Wall PID Flattening Factor ********************
+set NWB_PSD_FLATTENING --run=2000-6000 "${CALIBRATIONS_DIR}/NWB_PSDFlattening.dat"
+set NWA_PSD_FLATTENING --run=2000-6000 "${CALIBRATIONS_DIR}/NWA_PSDFlattening.dat"
+** Neutron Wall IsGamma Graphic Cut * ********************
+set NWB_ISGAMMA_CUTS --run=2000-6000 "${CALIBRATIONS_DIR}/NWB_IsGammaCuts_cosmics_straight.root"
+set NWA_ISGAMMA_CUTS --run=2000-6000 "${CALIBRATIONS_DIR}/NWA_IsGammaCuts_cosmics_straight.root"
+** Neutron Wall PSD Residual * ***************************
+set NWB_PSD_RESIDUAL --run=2000-6000 "${CALIBRATIONS_DIR}/NWB_Psd_Residual.txt"
+set NWA_PSD_RESIDUAL --run=2000-6000 "${CALIBRATIONS_DIR}/NWA_Psd_Residual.txt"
+** Neutron Wall Saturation Correction * ********************
+set NWB_SATURATION_CORRECTION --run=2000-6000 "${CALIBRATIONS_DIR}/NWB_Saturation_Correction.txt"
+set NWA_SATURATION_CORRECTION --run=2000-6000 "${CALIBRATIONS_DIR}/NWA_Saturation_Correction.txt"
+**********************************************************
+
+** Forward Array Time ************************************
+set FA_TIME_CALIBRATION --run=2000-3999 "${CALIBRATIONS_DIR}/FA_Time_Offset_run2523.dat"
+set FA_TIME_CALIBRATION --run=4000-6000 "${CALIBRATIONS_DIR}/FA_Time_Offset_run4557.dat"
+** Forward Array Pulse Height Correction *****************
+set FA_PULSE_HEIGHT_CORRECTION --run=2000-3999 "${CALIBRATIONS_DIR}/FA_PulseHeightCorrection_run2523.dat"
+set FA_PULSE_HEIGHT_CORRECTION --run=4000-6000 "${CALIBRATIONS_DIR}/FA_PulseHeightCorrection_run4543.dat"
+**********************************************************
+
+** Veto Wall Gain Matching *******************************
+set VW_GAIN_MATCHING_CALIBRATION --run=2000-6000 "${CALIBRATIONS_DIR}/VW_GainMatchig_4427.dat"
+**********************************************************
+** Veto Wall DETOF PID  **********************************
+set VW_DETOF_PID_CALIBRATION --run=2000-2280 --run=2565-2659 --run=2709-2870 --run=4000-4331 "${CALIBRATIONS_DIR}/VW_DETOF_PID_140AMeV.root"
+set VW_DETOF_PID_CALIBRATION --run=2281-2564 --run=2660-2708 --run=4332-4661 "${CALIBRATIONS_DIR}/VW_DETOF_PID_56AMeV.root"
+** Veto Wall Geometry ************************************
+set VW_GEOMETRY --run=2000-6000 "${CALIBRATIONS_DIR}/VW_Geometry.dat"
+** Veto Wall Position Calibration ************************
+set VW_POSITION_CALIBRATION --run=2000-6000 "${CALIBRATIONS_DIR}/VW_Position_Calibration_4621_4640.dat"
+
+** Microball Detector Status *****************************
+set MB_DETECTOR_STATUS --run=2000-6000 "${CALIBRATIONS_DIR}/MB_BadOrMissingDetectors.dat"
+** Microball Geometry ************************************
+set MB_GEOMETRY --run=2000-6000 "${CALIBRATIONS_DIR}/MB_Geometry.dat"
+** Microball Impact Parameter ****************************
+set MB_IMPACT_PARAMETER --run=2000-2005 --run=2040-2044 --run=2056-2080 --exclude=2073 --run=2084-2106 --run=2710-2721 --run=2784-2800 --exclude=2790-2794 "${CALIBRATIONS_DIR}/MB_ImpactParameter_40Ca_124Sn_140AMeV.dat"
+set MB_IMPACT_PARAMETER --run=2474-2483 --run=2529-2546 --run=2664-2668 --run=2699-2705 "${CALIBRATIONS_DIR}/MB_ImpactParameter_40Ca_124Sn_56AMeV.dat"
+set MB_IMPACT_PARAMETER --run=4007-4020 --exclude=4015-4017 --run=4042-4078 --run=4142-4150 --run=4168,4170,4171,4172,4174 --run=4190-4201 --run=4266-4300 "${CALIBRATIONS_DIR}/MB_ImpactParameter_48Ca_124Sn_140AMeV.dat"
+set MB_IMPACT_PARAMETER --run=4333-4380 --exclude=4335 --run=4511-4541 --run=4621-4640 "${CALIBRATIONS_DIR}/MB_ImpactParameter_48Ca_124Sn_56AMeV.dat"
+set MB_IMPACT_PARAMETER --run=2107-2114 --run=2201-2264 --exclude=2256-2258 --run=2614-2631 --run=2750-2767 --run=2816-2821 --exclude=2820 --run=2830-2846 "${CALIBRATIONS_DIR}/MB_ImpactParameter_40Ca_112Sn_140AMeV.dat"
+set MB_IMPACT_PARAMETER --run=2281-2331 --exclude=2284,2312,2313 --run=2357-2376 --run=2417-2452 --exclude=2425,2429,2433,2443,2449 --run=2676-2679 "${CALIBRATIONS_DIR}/MB_ImpactParameter_40Ca_112Sn_56AMeV.dat"
+set MB_IMPACT_PARAMETER --run=2684,2685 "${CALIBRATIONS_DIR}/MB_ImpactParameter_40Ca_112Sn_56AMeV.dat"
+set MB_IMPACT_PARAMETER --run=4125-4132 --run=4154,4156,4180 --run=4203-4209 --run=4247-4253 "${CALIBRATIONS_DIR}/MB_ImpactParameter_48Ca_112Sn_140AMeV.dat"
+set MB_IMPACT_PARAMETER --run=4422-4424 --run=4448-4464 --run=4593=4605 "${CALIBRATIONS_DIR}/MB_ImpactParameter_48Ca_112Sn_56AMeV.dat"
+set MB_IMPACT_PARAMETER --run=2115-2200 --exclude=2129,2149,2169 --run=2266-2280 --exclude=2271 --run=2565-2611 --exclude=2590 --run=2632-2656 "${CALIBRATIONS_DIR}/MB_ImpactParameter_40Ca_58Ni_140AMeV.dat"
+set MB_IMPACT_PARAMETER --run=2769-2775 --run=2809-2814 --run=2848-2870 "${CALIBRATIONS_DIR}/MB_ImpactParameter_40Ca_58Ni_140AMeV.dat"
+set MB_IMPACT_PARAMETER --run=2333-2354 --run=2378-2397 --run=2485-2510 --run=2686-2697 "${CALIBRATIONS_DIR}/MB_ImpactParameter_40Ca_58Ni_56AMeV.dat"
+*The next file has been temp changed to 64Ni due to problems in the 58Ni data
+set MB_IMPACT_PARAMETER --run=4136-4141 --run=4158,4159 --run=4176,4178 --run=4212-4219 --run=4255-4264 --run=4308-4313 "${CALIBRATIONS_DIR}/MB_ImpactParameter_48Ca_64Ni_140AMeV.dat"
+set MB_IMPACT_PARAMETER --run=4426 --run=4495-4509 --run=4607-4619 "${CALIBRATIONS_DIR}/MB_ImpactParameter_48Ca_58Ni_56AMeV.dat"
+set MB_IMPACT_PARAMETER --run=2512-2527 --run=2547-2559 --exclude=2553 --run=2670-2675 "${CALIBRATIONS_DIR}/MB_ImpactParameter_40Ca_64Ni_56AMeV.dat"
+set MB_IMPACT_PARAMETER --run=2265 --run=2723-2745 --run=2777-2782 --run=2802-2807 "${CALIBRATIONS_DIR}/MB_ImpactParameter_40Ca_64Ni_140AMeV.dat"
+set MB_IMPACT_PARAMETER --run=4023-4032 --run=4082-4123 --run=4162-4166 --exclude=4165 --run=4224-4245 --run=4315-4327 "${CALIBRATIONS_DIR}/MB_ImpactParameter_48Ca_64Ni_140AMeV.dat"
+set MB_IMPACT_PARAMETER --run=4383-4414 --exclude=4400 --run=4466-4493 --run=4543-4573 --run=4642-4661 "${CALIBRATIONS_DIR}/MB_ImpactParameter_48Ca_64Ni_56AMeV.dat"
+set MB_IMPACT_PARAMETER --run=2825-2829 "${CALIBRATIONS_DIR}/MB_ImpactParameter_40Ca_CH2_140AMeV.dat"
+set MB_IMPACT_PARAMETER --run=4000-4005 --run=4021,4022 "${CALIBRATIONS_DIR}/MB_ImpactParameter_48Ca_CH2_140AMeV.dat"
+set MB_IMPACT_PARAMETER --run=4039,4040,4332 --run=4585-4589 "${CALIBRATIONS_DIR}/MB_ImpactParameter_48Ca_CH2_56AMeV.dat"
+** Microball Hit Condition *******************************
+set MB_HIT_CONDITION --run=2000-2005 --run=2040-2044 --run=2056-2080 --exclude=2073 --run=2084-2106 --run=2710-2721 --run=2784-2800 --exclude=2790-2794 "${CALIBRATIONS_DIR}/MB_HitCondition_140AMeV.root"
+set MB_HIT_CONDITION --run=2474-2483 --run=2529-2546 --run=2664-2668 --run=2699-2705 "${CALIBRATIONS_DIR}/MB_HitCondition_40Ca_124Sn_56AMeV.root"
+set MB_HIT_CONDITION --run=4007-4020 --exclude=4015-4017 --run=4042-4078 --run=4142-4150 --run=4168,4170,4171,4172,4174 --run=4190-4201 --run=4266-4300 "${CALIBRATIONS_DIR}/MB_HitCondition_140AMeV.root"
+set MB_HIT_CONDITION --run=4333-4380 --exclude=4335 --run=4511-4541 --run=4621-4640 "${CALIBRATIONS_DIR}/MB_HitCondition_48Ca_124Sn_56AMeV.root"
+set MB_HIT_CONDITION --run=2107-2114 --run=2201-2264 --exclude=2256-2258 --run=2614-2631 --run=2750-2767 --run=2816-2821 --exclude=2820 --run=2830-2846 "${CALIBRATIONS_DIR}/MB_HitCondition_140AMeV.root"
+set MB_HIT_CONDITION --run=2281-2331 --exclude=2284,2312,2313 --run=2357-2376 --run=2417-2452 --exclude=2425,2429,2433,2443,2449 --run=2676-2679 "${CALIBRATIONS_DIR}/MB_HitCondition_40Ca_112Sn_56AMeV.root"
+set MB_HIT_CONDITION --run=2684,2685 "${CALIBRATIONS_DIR}/MB_HitCondition_40Ca_112Sn_56AMeV.root"
+set MB_HIT_CONDITION --run=4125-4132 --run=4154,4156,4180 --run=4203-4209 --run=4247-4253 "${CALIBRATIONS_DIR}/MB_HitCondition_140AMeV.root"
+set MB_HIT_CONDITION --run=4422-4424 --run=4448-4464 --run=4593=4605 "${CALIBRATIONS_DIR}/MB_HitCondition_48Ca_112Sn_56AMeV.root"
+set MB_HIT_CONDITION --run=2115-2200 --exclude=2129,2149,2169 --run=2266-2280 --exclude=2271 --run=2565-2611 --exclude=2590 --run=2632-2656 "${CALIBRATIONS_DIR}/MB_HitCondition_140AMeV.root"
+set MB_HIT_CONDITION --run=2769-2775 --run=2809-2814 --run=2848-2870 "${CALIBRATIONS_DIR}/MB_HitCondition_140AMeV.root"
+set MB_HIT_CONDITION --run=2333-2354 --run=2378-2397 --run=2485-2510 --run=2686-2697 "${CALIBRATIONS_DIR}/MB_HitCondition_40Ca_58Ni_56AMeV.root"
+set MB_HIT_CONDITION --run=4136-4141 --run=4158,4159 --run=4176,4178 --run=4212-4219 --run=4255-4264 --run=4308-4313 "${CALIBRATIONS_DIR}/MB_HitCondition_140AMeV.root"
+set MB_HIT_CONDITION --run=4426 --run=4495-4509 --run=4607-4619 "${CALIBRATIONS_DIR}/MB_HitCondition_48Ca_58Ni_56AMeV.root"
+set MB_HIT_CONDITION --run=2512-2527 --run=2547-2559 --exclude=2553 --run=2670-2675 "${CALIBRATIONS_DIR}/MB_HitCondition_40Ca_64Ni_56AMeV.root"
+set MB_HIT_CONDITION --run=2265 --run=2723-2745 --run=2777-2782 --run=2802-2807 "${CALIBRATIONS_DIR}/MB_HitCondition_140AMeV.root"
+set MB_HIT_CONDITION --run=4023-4032 --run=4082-4123 --run=4162-4166 --exclude=4165 --run=4224-4245 --run=4315-4327 "${CALIBRATIONS_DIR}/MB_HitCondition_140AMeV.root"
+set MB_HIT_CONDITION --run=4383-4414 --exclude=4400 --run=4466-4493 --run=4543-4573 --run=4642-4661 "${CALIBRATIONS_DIR}/MB_HitCondition_48Ca_64Ni_56AMeV.root"
+set MB_HIT_CONDITION --run=2825-2829 "${CALIBRATIONS_DIR}/MB_HitCondition_140AMeV.root"
+set MB_HIT_CONDITION --run=4000-4005 --run=4021,4022 "${CALIBRATIONS_DIR}/MB_HitCondition_140AMeV.root"
+set MB_HIT_CONDITION --run=4039,4040,4332 --run=4585-4589 "${CALIBRATIONS_DIR}/MB_HitCondition_48Ca_CH2_56AMeV.root"
+**********************************************************
+
+** HiRA Si Energy Calibration ****************************
+set HIRA_SI_ENERGY_CALIBRATION --run=2000-3999 "${CALIBRATIONS_DIR}/HiRA_Si_Calibration_run2916.dat"
+set HIRA_SI_ENERGY_CALIBRATION --run=4000-6000 "${CALIBRATIONS_DIR}/HiRA_Si_Calibration_run4761.dat"
+** HiRA CsI Energy Calibration ***************************
+set HIRA_CSI_ENERGY_CALIBRATION --run=2000-6000 "${CALIBRATIONS_DIR}/HiRA_CsI_LightVsEnergy_ALL.dat"
+** HiRA CsI Pulser Calibration ***************************
+set HIRA_CSI_PULSER_CALIBRATION --run=2000-2114 "${CALIBRATIONS_DIR}/HiRA_CsI_Pulser_170setting.dat"
+set HIRA_CSI_PULSER_CALIBRATION --run=2115-2139 "${CALIBRATIONS_DIR}/HiRA_CsI_Pulser_200setting.dat"
+set HIRA_CSI_PULSER_CALIBRATION --run=2140-2159 "${CALIBRATIONS_DIR}/HiRA_CsI_Pulser_170setting.dat"
+set HIRA_CSI_PULSER_CALIBRATION --run=2160-2199 "${CALIBRATIONS_DIR}/HiRA_CsI_Pulser_200setting.dat"
+set HIRA_CSI_PULSER_CALIBRATION --run=2200-6000 "${CALIBRATIONS_DIR}/HiRA_CsI_Pulser_170setting.dat"
+** HiRA Detector Status **********************************
+set HIRA_DETECTOR_STATUS --run=2000-3999 "${CALIBRATIONS_DIR}/HiRA_StripBad_E15190_run2916.dat"
+set HIRA_DETECTOR_STATUS --run=4000-6000 "${CALIBRATIONS_DIR}/HiRA_StripBad_E15190_run4761.dat"
+** HiRA Si Matching Hi/Low *******************************
+set HIRA_SI_HILOWGAIN --run=2000-6000 "${CALIBRATIONS_DIR}/HiRA_Si_HighGain_LowGain.dat"
+** HiRA Geometry *****************************************
+set HIRA_GEOMETRY --run=2000-6000 "${CALIBRATIONS_DIR}/HiRA_Geometry_RomerArmBeamCorrected.dat"
+** HiRA Identification ***********************************
+set HIRA_PID --run=2000-6000 "${CALIBRATIONS_DIR}/HiRA_PIDLines.dat"
+**********************************************************

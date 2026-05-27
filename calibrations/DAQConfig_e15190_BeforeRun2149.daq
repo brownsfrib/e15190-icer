@@ -1,0 +1,43 @@
+** DAQ Config for experiment E15190 before run 2148 **
+** Written by Daniele Dell'Aquila (dellaqui@nscl.msu.edu)
+** Short guide *****************************************************************
+** To add a new stack: define stack "name of the stack" stackID
+** Prototype add new module
+** add module stackID RBSisTimestampUnpacker "name" vsn
+** add module stackID RBRimestamp "name" vsn
+** add module stackID RBHINPUnpacker "name" vsn #motherboards usingFADC(true, false)
+** add module stackID RBCAEN7xxUnpacker "name" vsn
+** add module stackID RBCAEN1x90Unpacker "name" vsn depth refch #Nchannels ns_per_ch
+********************************************************************************
+
+** HiRA STACK
+define stack "HiRA Stack" 0
+add module 0 RBSisTimestampUnpacker "timestamp1" -1
+add module 0 RBHINPUnpacker "hinp" -1 2 false
+add module 0 RBCAEN7xxUnpacker "adc1" 5
+add module 0 RBCAEN7xxUnpacker "adc2" 6
+add module 0 RBCAEN1x90Unpacker "csiTDC" 7 1 48 128 0.1
+add module 0 RBCAEN7xxUnpacker "MBqdc1" 9
+add module 0 RBCAEN7xxUnpacker "MBqdc2" 10
+add module 0 RBCAEN7xxUnpacker "MBqdc3" 11
+add module 0 RBCAEN7xxUnpacker "MBqdc4" 12
+add module 0 RBCAEN7xxUnpacker "MBqdc5" 14
+add module 0 RBCAEN7xxUnpacker "MBqdc6" 0
+add module 0 RBCAEN7xxUnpacker "MBtdc1" 15
+add module 0 RBCAEN7xxUnpacker "MBtdc2" 16
+add module 0 RBCAEN7xxUnpacker "MBtdc3" 17
+
+** NW/VW Stack
+define stack "NW Stack" 1
+add module 1 RBSisTimestampUnpacker "timestamp2" -1
+add module 1 RBCAEN7xxUnpacker "qdc1" 4
+add module 1 RBCAEN7xxUnpacker "qdc2" 5
+add module 1 RBCAEN7xxUnpacker "qdc3" 6
+add module 1 RBCAEN7xxUnpacker "qdc4" 8
+add module 1 RBCAEN7xxUnpacker "qdc5" 9
+add module 1 RBCAEN7xxUnpacker "qdc6" 10
+add module 1 RBCAEN1x90Unpacker "NWTDC" 12 1 104 128 0.1
+add module 1 RBCAEN7xxUnpacker "qdc7" 15
+add module 1 RBCAEN7xxUnpacker "qdc8" 16
+add module 1 RBCAEN1x90Unpacker "VWTDC" 14 1 8 128 0.1
+add module 1 RBCAEN7xxUnpacker "qdcfart" 19

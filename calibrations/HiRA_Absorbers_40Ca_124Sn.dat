@@ -1,0 +1,43 @@
+*This file contains absorber materials, including the experiment target, which are placed in front of each HiRA
+*telescope. This information is useful to calculate the kinetic energy of particles as emitted from the target.
+*
+* INSTRUCTIONS:
+* To define the experiment target: set target "the_material" thickness
+* To add a new absorber to the telescope: set absorber ID "the_material" thickness
+* here ID is the telescope number to which to add the absorber. Absorbers are added from the target to the telescope. (The order matters)
+*
+*
+
+* for E15190 experiment targets are:
+* 58Ni -> 5.0 mg/cm2 -> 5.6208 um
+* 64Ni -> 5.3 mg/cm2 -> 5.9581 um
+* 124Sn -> 6.47 mg/cm2 -> 8.8854 um
+* 112Sn -> 6.1 mg/cm2 -> 8.3772 um
+* CH2 -> 10.0 mg/cm2 -> 125.2082 um
+
+set target "Sn" 8.8854
+
+set absorber 0 "SnPb" 19.5185
+set absorber 0 "Mylar" 1.47
+set absorber 1 "SnPb" 18.332
+set absorber 1 "Mylar" 1.47
+set absorber 2 "SnPb" 18.299
+set absorber 2 "Mylar" 1.47
+set absorber 3 "SnPb" 18.4699
+set absorber 3 "Mylar" 1.47
+set absorber 4 "SnPb" 19.747
+set absorber 4 "Mylar" 1.47
+set absorber 5 "SnPb" 18.347
+set absorber 5 "Mylar" 1.47
+set absorber 6 "SnPb" 18.321
+set absorber 6 "Mylar" 1.47
+set absorber 7 "SnPb" 18.265
+set absorber 7 "Mylar" 1.47
+set absorber 8 "SnPb" 20.0165
+set absorber 8 "Mylar" 1.47
+set absorber 9 "SnPb" 18.435
+set absorber 9 "Mylar" 1.47
+set absorber 10 "SnPb" 18.637
+set absorber 10 "Mylar" 1.47
+set absorber 11 "SnPb" 20.057
+set absorber 11 "Mylar" 1.47
