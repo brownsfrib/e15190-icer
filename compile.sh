@@ -2,7 +2,8 @@
 
 LIB_DIR="./lib"
 INCLUDES="-I$LIB_DIR -I$LIB_DIR/include -I$LIB_DIR/HTRunInfo -I$LIB_DIR/Nuclear_Masses -IPlugins"
-LINK_FLAGS="-L$LIB_DIR -lE15190Reader -Wl,-rpath,\$ORIGIN/../lib"
+#LINK_FLAGS="-L$LIB_DIR -lE15190Calibrated -Wl,-rpath \$ORIGIN/../lib"
+LINK_FLAGS="-L$LIB_DIR -Wl,--no-as-needed -lE15190Reader -Wl,--as-needed -Wl,-rpath,\$ORIGIN/../lib"
 PROJECT_ROOT_DEF="-DPROJECT_ROOT=\"$(pwd)\""
 
 if [ "$#" -lt 1 ]; then
