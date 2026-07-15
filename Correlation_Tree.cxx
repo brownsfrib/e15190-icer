@@ -176,9 +176,6 @@ int main (int argc, char* argv[]){
                 throw std::runtime_error(message);
         }
 
-        const size_t bins = 60; // microball max multiplicities
-        TH1D multHist("multHist", "", bins, 0, bins);
-
         TFile* file = TFile::Open(RUN_INPUT_PATH.c_str(), "READ");
         if ((!file) || (file->IsZombie())){
                 std::string message = "\033[1;31mSomething lurks .... you're file " + RUN_INPUT_PATH + " cannot be opened!\033[0m\n";
@@ -231,62 +228,11 @@ int main (int argc, char* argv[]){
 
 	// For event mixing!
 	std::deque<EventBuffer> window;
+
 	// Populating the event mixing window before calculating correlations, so we don't lose the first 20 events
 	clock_t fStartTime = clock();
-	/*
-	while (reader.Next()){
-		MicroballCalibratedData &Microball 	= *microballData;
-		HiRACalibratedData &HiRA 		= *hiraData;
-
-		if (
-			(Microball.fmulti > 0)
-			&&(HiRA.fmulti > 0)
-		){
-			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Correlation analysis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-			std::vector<TVector3> momenta;
-			std::vector<std::pair<int, int>> NZ;
-			std::vector<double> energy;
-
-			for (int i=0; i < HiRA.fmulti; i++){
-				int A = HiRA.fAId[i];
-				int Z = HiRA.fZId[i];
-				double particleEnergy = HiRA.fKinEnergy[i] + isotopeTable.Mass((A-Z), Z, true);
-				double momentum = HiRA.fMomentum[i];
-				double theta	= HiRA.fTheta[i];
-				double phi	= HiRA.fPhi[i];
-				double pXi 	= momentum*std::cos(phi)*std::sin(theta);
-				double pYi 	= momentum*std::sin(phi)*std::sin(theta);
-				double pZi 	= momentum*std::cos(theta);
-				TVector3 vec(pXi, pYi, pZi);
-
-				if (
-					(momentum >= 0)
-					&& (A > 0)
-					&& (Z > 0)
-				){
-					momenta.push_back(vec);
-					energy.push_back(particleEnergy);
-					NZ.push_back(std::make_pair(A-Z, Z));
-				}
-			}
-
-			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Event mixing %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-			EventBuffer current;
-			current.fill(momenta, energy, NZ, Microball.fmulti);
-			if (window.size() < WINDOWSIZE){
-				window.push_back(current);
-			}
-			else{
-				break;
-			}
-		}
-	}
-	*/
-
 	int entry = 0;
 	int totalEntries = reader.GetEntries(true);
-	reader.Restart();
 	while(reader.Next()){
 		PrintStatus(entry, totalEntries, fStartTime);
 

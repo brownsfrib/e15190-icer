@@ -165,6 +165,7 @@ TTreeCache notes:
 // -------------------------------------
 // -------------------------------------
 
+// TODO include multiple harmonics in output file
 #define harmonic 1.0
 int main (int argc, char* argv[]){
 
@@ -261,8 +262,8 @@ int main (int argc, char* argv[]){
 	// -------------------------------------------------
 	// ---------- Defining rapidity and pT axes --------
 	// -------------------------------------------------
-	const TAxis rapAxis(8, -0.2, 0.2);
-	const TAxis ptAAxis(8, 50, 400);
+	const TAxis rapAxis(10, -0.2, 0.2);
+	const TAxis ptAAxis(10, 50, 400);
 
 	// -------------------------------------------------
 	// ---------- Defining rapidity and pT axes --------
