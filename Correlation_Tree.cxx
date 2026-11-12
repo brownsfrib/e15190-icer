@@ -39,27 +39,32 @@
 
 struct PairTreeBuffer{
 	int multi; // microball multiplicity
-        float qRel, qLong, qPerp, pairSum, kT, yPair;
+        double qRel, qLong, qPerp, pairSum, kT, yPair, rap1, rap2, pT1, pT2;
         int A1, Z1, A2, Z2;
 
         void connect(TTree& tree){
 		tree.Branch("multi",	  &multi,      "multi/I");
-                tree.Branch("qRel",       &qRel,       "qRel/F");
-                tree.Branch("qLong",      &qLong,      "qLong/F");
-                tree.Branch("qPerp",      &qPerp,      "qPerp/F");
-                tree.Branch("pairSum",    &pairSum,    "pairSum/F");
-                tree.Branch("kT",         &kT,         "kT/F");
-                tree.Branch("yPair",      &yPair,      "yPair/F");
+                tree.Branch("qRel",       &qRel,       "qRel/D");
+                tree.Branch("qLong",      &qLong,      "qLong/D");
+                tree.Branch("qPerp",      &qPerp,      "qPerp/D");
+                tree.Branch("pairSum",    &pairSum,    "pairSum/D");
+                tree.Branch("kT",         &kT,         "kT/D");
+                tree.Branch("yPair",      &yPair,      "yPair/D");
                 tree.Branch("A1",         &A1,         "A1/I");
                 tree.Branch("Z1",         &Z1,         "Z1/I");
                 tree.Branch("A2",         &A2,         "A2/I");
                 tree.Branch("Z2",         &Z2,         "Z2/I");
+		tree.Branch("rap1",	  &rap1,       "rap1/D");
+		tree.Branch("rap2",	  &rap2,       "rap2/D");
+		tree.Branch("pT1",	  &pT1,        "pT1/D");
+		tree.Branch("pT2",	  &pT2,        "pT2/D");
         }
 
         void set(
                         const std::pair<int,int>& nz1, const std::pair<int,int>& nz2,
                         double qR, double qL, double qP, double pSum,
-                        double kt, double yp, int mbMult)
+                        double kt, double yp, int mbMult,
+			double r1, double r2, double pt1, double pt2)
         {
                 int a1 = nz1.first + nz1.second; 
                 int a2 = nz2.first + nz2.second;
@@ -77,17 +82,21 @@ struct PairTreeBuffer{
                         std::swap(z1, z2);
                 }
 
+		multi		= mbMult;
+                qRel            = qR;
+                qLong           = qL;
+                qPerp           = qP;
+                pairSum         = pSum;
+                kT              = kt;
+                yPair           = yp;
                 A1              = a1;
                 Z1              = z1;
                 A2              = a2;
                 Z2              = z2;
-                qRel            = static_cast<float>(qR);
-                qLong           = static_cast<float>(qL);
-                qPerp           = static_cast<float>(qP);
-                pairSum         = static_cast<float>(pSum);
-                kT              = static_cast<float>(kt);
-                yPair           = static_cast<float>(yp);
-		multi		= mbMult;
+		rap1		= r1;
+		rap2		= r2;
+		pT1		= pt1;
+		pT2		= pt2;
         }
 };
 
@@ -126,8 +135,13 @@ static void mixWithWindow(
 	for (const EventBuffer& past : window){
 		// For each particle in current, pair with each particle in past
 		for (size_t i=0; i < current.size(); i++){
+			double pT1  = current.momenta[i].Perp();
+			double rap1 = 0.5*log(
+					(current.energy[i] + current.momenta[i].Z())/(current.energy[i] - current.momenta[i].Z()));
 			for (size_t j=0; j < past.size(); j++){
-			
+				double pT2  = past.momenta[j].Perp();
+				double rap2 = 0.5*log((past.energy[j] + past.momenta[j].Z())/(past.energy[j] - past.momenta[j].Z()));
+				
 				TLorentzVector p1(current.momenta[i], current.energy[i]);
 				TLorentzVector p2(past.momenta[j],    past.energy[j]);
 				TLorentzVector pairLV = p1 + p2;
@@ -144,9 +158,12 @@ static void mixWithWindow(
 				double qLong = poyntingRel.Z();
 				double qPerp = poyntingRel.Perp();
 				
-				mixBuf.set(current.NZ[i], past.NZ[j],
-				qRel, qLong, qPerp, pairSum.Mag(), kT, yPair,
-				current.multi);
+				mixBuf.set(
+						current.NZ[i], past.NZ[j],
+						qRel, qLong, qPerp, pairSum.Mag(), 
+						kT, yPair,current.multi,
+						rap1, rap2, pT1, pT2
+					);
 
 				mixTree.Fill();
 			}
@@ -214,13 +231,13 @@ int main (int argc, char* argv[]){
 
 
 	// Output TTree definition
-	std::string corTreeName = "Correlated data - run " + RUN_NUMBER;
+	std::string corTreeName = "Correlated data - run " + RUN_NUMBER + " - rap1 and rap2 in CM frame";;
 	TTree corTree("cor", corTreeName.c_str());
 	corTree.SetAutoFlush(-30000000);
 	PairTreeBuffer corBuf;
 	corBuf.connect(corTree);
 
-	std::string mixTreeName = "Mixed data - run " + RUN_NUMBER;
+	std::string mixTreeName = "Mixed data - run " + RUN_NUMBER + " - rap1 and rap2 in CM frame";
 	TTree mixTree("mix", mixTreeName.c_str());
 	mixTree.SetAutoFlush(-30000000);
 	PairTreeBuffer mixBuf;
@@ -274,15 +291,19 @@ int main (int argc, char* argv[]){
 
 			if (momenta.size() >= 2){
 				for (int i=0; i < (int)momenta.size(); i++){
+					double pT1  = momenta[i].Perp();
+					double rap1 = 0.5*log((energy[i] + momenta[i].Z())/(energy[i] - momenta[i].Z()));
 					for (int j=i+1; j < (int)momenta.size(); j++){
+						double pT2  = momenta[j].Perp();
+						double rap2 = 0.5*log((energy[j] + momenta[j].Z())/(energy[j] - momenta[j].Z()));
 
 						// Pair four-vector in lab frame (before boosting)
 						TLorentzVector p1(momenta[i], energy[i]);
 						TLorentzVector p2(momenta[j], energy[j]);
 						TLorentzVector pairLV = p1 + p2;
 
-						float yPair = pairLV.Rapidity();
-						float kT    = 0.5 * pairLV.Perp();
+						double yPair = pairLV.Rapidity();
+						double kT    = 0.5 * pairLV.Perp();
 
 						// Boost into pair rest frame
 						TVector3 pairSum = (momenta[i] + momenta[j]);
@@ -295,16 +316,16 @@ int main (int argc, char* argv[]){
 						TVector3 p2Rel = p2.Vect();
 
 						TVector3 poyntingRel 	= 0.5*(p1Rel - p2Rel);
-						float qRel 		= poyntingRel.Mag();
-						float qLong 		= poyntingRel.Z();
-						float qPerp		= poyntingRel.Perp();
+						double qRel 		= poyntingRel.Mag();
+						double qLong 		= poyntingRel.Z();
+						double qPerp		= poyntingRel.Perp();
 
 						corBuf.set(
 								NZ[i], NZ[j], 
 								qRel, qLong, 
 								qPerp, pairSum.Mag(), 
-								kT, yPair, 
-								Microball.fmulti
+								kT, yPair, Microball.fmulti,
+								rap1, rap2, pT1, pT2
 						);
 
 						corTree.Fill();
