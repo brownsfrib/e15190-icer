@@ -39,7 +39,9 @@
 
 struct PairTreeBuffer{
 	int multi; // microball multiplicity
-        double qRel, qLong, qPerp, pairSum, kT, yPair, rap1, rap2, pT1, pT2;
+	// qOut - points along the pair's transverse momentum (the direction the pair is flying, seen from above the beam)
+	// qSide - perpendicular to both the pair's direction and the beam
+        double qRel, qLong, qOut, qSide, qPerp, pairSum, kT, yPair, rap1, rap2, pT1, pT2;
         int A1, Z1, A2, Z2;
 
         void connect(TTree& tree){
@@ -47,6 +49,8 @@ struct PairTreeBuffer{
                 tree.Branch("qRel",       &qRel,       "qRel/D");
                 tree.Branch("qLong",      &qLong,      "qLong/D");
                 tree.Branch("qPerp",      &qPerp,      "qPerp/D");
+		tree.Branch("qOut",	  &qOut,       "qOut/D");
+		tree.Branch("qSide",	  &qSide,      "qSide/D");
                 tree.Branch("pairSum",    &pairSum,    "pairSum/D");
                 tree.Branch("kT",         &kT,         "kT/D");
                 tree.Branch("yPair",      &yPair,      "yPair/D");
@@ -63,6 +67,7 @@ struct PairTreeBuffer{
         void set(
                         const std::pair<int,int>& nz1, const std::pair<int,int>& nz2,
                         double qR, double qL, double qP, double pSum,
+			double qO, double qS,
                         double kt, double yp, int mbMult,
 			double r1, double r2, double pt1, double pt2)
         {
@@ -80,12 +85,19 @@ struct PairTreeBuffer{
                 ){
                         std::swap(a1, a2);
                         std::swap(z1, z2);
+			std::swap(r1, r2);
+			std::swap(pt1, pt2);
+			qL = -qL;
+			qO = -qO;
+			qS = -qS;
                 }
 
 		multi		= mbMult;
                 qRel            = qR;
                 qLong           = qL;
                 qPerp           = qP;
+		qOut		= qO;
+		qSide		= qS;
                 pairSum         = pSum;
                 kT              = kt;
                 yPair           = yp;
@@ -157,10 +169,18 @@ static void mixWithWindow(
 				double qRel  = poyntingRel.Mag();
 				double qLong = poyntingRel.Z();
 				double qPerp = poyntingRel.Perp();
-				
+
+				// out = along the pair's transverse momentum, side = perpendicular to it and to the beam
+				TVector3 outAxis(pairSum.X(), pairSum.Y(), 0.0);
+				outAxis = outAxis.Unit();                          // (0,0,0) if pT_pair = 0
+				TVector3 sideAxis = TVector3(0, 0, 1).Cross(outAxis);
+				double qOut  = poyntingRel.Dot(outAxis);
+				double qSide = poyntingRel.Dot(sideAxis);
+
 				mixBuf.set(
 						current.NZ[i], past.NZ[j],
 						qRel, qLong, qPerp, pairSum.Mag(), 
+						qOut, qSide,
 						kT, yPair,current.multi,
 						rap1, rap2, pT1, pT2
 					);
@@ -320,10 +340,19 @@ int main (int argc, char* argv[]){
 						double qLong 		= poyntingRel.Z();
 						double qPerp		= poyntingRel.Perp();
 
+						// out = along the pair's transverse momentum
+						// side = perpendicular to it and to the beam
+						TVector3 outAxis(pairSum.X(), pairSum.Y(), 0.0);
+						outAxis = outAxis.Unit(); 
+						TVector3 sideAxis = TVector3(0, 0, 1).Cross(outAxis);
+						double qOut  = poyntingRel.Dot(outAxis);
+						double qSide = poyntingRel.Dot(sideAxis);
+
 						corBuf.set(
 								NZ[i], NZ[j], 
 								qRel, qLong, 
 								qPerp, pairSum.Mag(), 
+								qOut, qSide,
 								kT, yPair, Microball.fmulti,
 								rap1, rap2, pT1, pT2
 						);
