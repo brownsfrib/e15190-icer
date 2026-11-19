@@ -32,12 +32,13 @@ if __name__ == "__main__":
 	parser.add_argument("--script",     type=str, default="", help="Something like ./bin/executable")
 	args = parser.parse_args()
 	if os.path.exists(args.script) == False:
-		raise Exeception(f"\033[1;31mExectuable {args.script} does not exist.\033[0m\n")
+		raise Exception(f"\033[1;31mExectuable {args.script} does not exist.\033[0m\n")
 
 	runs, y_cm = GetRuns(df, Projectile=args.projectile, Target=args.target, Energy=args.energy)
 	paths, systemDir = GetSubmissionArgs(runs, args.projectile, args.target, args.energy)
 	
-	outDir = f"/scratch/e15190/runs/{systemDir}"
+	outDir = f"/mnt/research/FRIBEOS/e15190-output/{systemDir}"
+	os.makedirs(outDir, exist_ok=True)
 	print(f"Processing {len(runs)} runs for {systemDir}", flush=True)
 	env = os.environ.copy()
 	for i in range(len(runs)):
