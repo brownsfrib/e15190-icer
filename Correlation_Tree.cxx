@@ -35,12 +35,30 @@
 #include "ame20parser.h"
 #include "./Plugins/StatusMethod.h"
 
-#define WINDOWSIZE 20
+#define WINDOWSIZE 20        // events in each mixing window
+#define MIX_MULTI_WIDTH 2    // mixing classes: events are mixed only with events whose Microball
+                             // multiplicity falls in the same class (multi / MIX_MULTI_WIDTH)
+
+// Where a particle hit HiRA. Two particles that share a telescope's front strip, back strip or CsI
+// crystal cannot both be reconstructed in one event (Tam thesis sec. 6.1.3), so such pairs are absent
+// from the same-event data and must be vetoed in the mixed data too. The veto is applied to both.
+struct DetectorHit {
+	int tel, stripf, stripb, csi;
+};
+
+static bool SharesDetector(const DetectorHit& a, const DetectorHit& b){
+	if (a.tel != b.tel) return false;
+	return (a.stripf == b.stripf)
+		|| (a.stripb == b.stripb)
+		|| ((a.csi >= 0) && (a.csi == b.csi));   // csi < 0: no CsI hit (stopped in the DSSSD)
+}
 
 struct PairTreeBuffer{
 	int multi; // microball multiplicity
 	// qOut - points along the pair's transverse momentum (the direction the pair is flying, seen from above the beam)
 	// qSide - perpendicular to both the pair's direction and the beam
+	// q* are in the pair rest frame. yPair, rap1, rap2, pT1, pT2, kT and pairSum are LAB frame
+	// (no boost to the CM; shift by y_cm, data/y_cm.py in e15190-icer, to compare systems/energies).
         double qRel, qLong, qOut, qSide, qPerp, pairSum, kT, yPair, rap1, rap2, pT1, pT2;
         int A1, Z1, A2, Z2;
 
@@ -118,6 +136,7 @@ struct EventBuffer {
 	std::vector<TVector3> momenta;
 	std::vector<double> energy;
 	std::vector<std::pair<int,int>> NZ;   // (N, Z) per particle
+	std::vector<DetectorHit> hits;        // detector elements per particle (for the veto)
 	int multi;                            // microball multiplicity at the event
 	
 	// Populate from the current event's vectors
@@ -125,11 +144,13 @@ struct EventBuffer {
 			const std::vector<TVector3>& mom,
 			const std::vector<double>& en,
 			const std::vector<std::pair<int,int>>& nz,
+			const std::vector<DetectorHit>& hit,
 			int mbMulti)
 	{
 		momenta = mom;
 		energy  = en;
 		NZ      = nz;
+		hits    = hit;
 		multi   = mbMulti;
 	}
 	
@@ -142,7 +163,8 @@ static void mixWithWindow(
 		const EventBuffer& current,
 		const std::deque<EventBuffer>& window,
 		PairTreeBuffer& mixBuf,
-		TTree& mixTree)
+		TTree& mixTree,
+		long& vetoed)
 {
 	for (const EventBuffer& past : window){
 		// For each particle in current, pair with each particle in past
@@ -151,6 +173,10 @@ static void mixWithWindow(
 			double rap1 = 0.5*log(
 					(current.energy[i] + current.momenta[i].Z())/(current.energy[i] - current.momenta[i].Z()));
 			for (size_t j=0; j < past.size(); j++){
+				if (SharesDetector(current.hits[i], past.hits[j])){
+					vetoed++;
+					continue;
+				}
 				double pT2  = past.momenta[j].Perp();
 				double rap2 = 0.5*log((past.energy[j] + past.momenta[j].Z())/(past.energy[j] - past.momenta[j].Z()));
 				
@@ -232,6 +258,10 @@ int main (int argc, char* argv[]){
         tree->AddBranchToCache("HiRA.fMomentum", kTRUE);
         tree->AddBranchToCache("HiRA.fPhi", kTRUE);
         tree->AddBranchToCache("HiRA.fTheta", kTRUE);
+        tree->AddBranchToCache("HiRA.fnumtel", kTRUE);
+        tree->AddBranchToCache("HiRA.fnumstripf", kTRUE);
+        tree->AddBranchToCache("HiRA.fnumstripb", kTRUE);
+        tree->AddBranchToCache("HiRA.fnumcsi", kTRUE);
 
         tree->StopCacheLearningPhase(); // normally you spend the first 100 events deciding what to cache. disable this
 
@@ -251,20 +281,21 @@ int main (int argc, char* argv[]){
 
 
 	// Output TTree definition
-	std::string corTreeName = "Correlated data - run " + RUN_NUMBER + " - rap1 and rap2 in CM frame";;
+	std::string corTreeName = "Correlated data - run " + RUN_NUMBER + " - rap, yPair, pT, kT in lab frame; detector veto";
 	TTree corTree("cor", corTreeName.c_str());
 	corTree.SetAutoFlush(-30000000);
 	PairTreeBuffer corBuf;
 	corBuf.connect(corTree);
 
-	std::string mixTreeName = "Mixed data - run " + RUN_NUMBER + " - rap1 and rap2 in CM frame";
+	std::string mixTreeName = "Mixed data - run " + RUN_NUMBER + " - rap, yPair, pT, kT in lab frame; detector veto; mixed within multiplicity classes";
 	TTree mixTree("mix", mixTreeName.c_str());
 	mixTree.SetAutoFlush(-30000000);
 	PairTreeBuffer mixBuf;
 	mixBuf.connect(mixTree);
 
-	// For event mixing!
-	std::deque<EventBuffer> window;
+	// For event mixing: one window per multiplicity class
+	std::map<int, std::deque<EventBuffer>> windows;
+	long sameVetoed = 0, mixedVetoed = 0;
 
 	// Populating the event mixing window before calculating correlations, so we don't lose the first 20 events
 	clock_t fStartTime = clock();
@@ -285,6 +316,7 @@ int main (int argc, char* argv[]){
 			std::vector<TVector3> momenta;
 			std::vector<std::pair<int, int>> NZ;
 			std::vector<double> energy;
+			std::vector<DetectorHit> hits;
 
 			for (int i=0; i < HiRA.fmulti; i++){
 				int A = HiRA.fAId[i];
@@ -306,6 +338,7 @@ int main (int argc, char* argv[]){
 					momenta.push_back(vec);
 					energy.push_back(particleEnergy);
 					NZ.push_back(std::make_pair(A-Z, Z));
+					hits.push_back({HiRA.fnumtel[i], HiRA.fnumstripf[i], HiRA.fnumstripb[i], HiRA.fnumcsi[i]});
 				}
 			}
 
@@ -314,6 +347,11 @@ int main (int argc, char* argv[]){
 					double pT1  = momenta[i].Perp();
 					double rap1 = 0.5*log((energy[i] + momenta[i].Z())/(energy[i] - momenta[i].Z()));
 					for (int j=i+1; j < (int)momenta.size(); j++){
+						// Same veto as the mixed pairs (should remove next to nothing here)
+						if (SharesDetector(hits[i], hits[j])){
+							sameVetoed++;
+							continue;
+						}
 						double pT2  = momenta[j].Perp();
 						double rap2 = 0.5*log((energy[j] + momenta[j].Z())/(energy[j] - momenta[j].Z()));
 
@@ -365,16 +403,20 @@ int main (int argc, char* argv[]){
 
 			// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Event mixing %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 			EventBuffer current;
-			current.fill(momenta, energy, NZ, Microball.fmulti);
+			current.fill(momenta, energy, NZ, hits, Microball.fmulti);
 
+			std::deque<EventBuffer>& window = windows[Microball.fmulti / MIX_MULTI_WIDTH];
 			if (window.size() >= WINDOWSIZE){
-				mixWithWindow(current, window, mixBuf, mixTree);
+				mixWithWindow(current, window, mixBuf, mixTree, mixedVetoed);
 				window.pop_front();
 			}
 			window.push_back(current);
 		}
 	}
 
+
+	std::cout << "\nDetector veto: " << sameVetoed << " same-event and " << mixedVetoed
+		  << " mixed-event pairs removed (shared front strip, back strip or CsI)\n";
 
 	outputFile->cd();
 	corTree.Write();

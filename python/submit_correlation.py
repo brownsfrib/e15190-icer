@@ -33,11 +33,14 @@ if __name__ == "__main__":
 	runs = GetRuns(df, Projectile=args.projectile, Target=args.target, Energy=args.energy)
 	paths, systemDir = GetSubmissionArgs(runs, args.projectile, args.target, args.energy)
 	
-	outDir = f"/scratch/e15190/runs/{systemDir}"
-	print(f"Processing {len(runs)} runs for {systemDir}", flush=True)
+	outBase = os.environ.get("CORR_OUTPUT_BASE", "/mnt/research/FRIBEOS/e15190")
+	systemOutDir = f"{outBase}/{systemDir}"
+	print(f"Processing {len(runs)} runs for {systemDir} -> {systemOutDir}", flush=True)
 	env = os.environ.copy()
 	for i in range(len(runs)):
 		print(f"\n----------- [{i+1}/{len(runs)}] run {runs[i]} ----------\n", flush=True)
+		outDir = f"{systemOutDir}/run_{runs[i]}"
+		os.makedirs(outDir, exist_ok=True)
 		env["RUN_NUMBER"]     = str(runs[i])
 		env["RUN_INPUT_PATH"] = paths[i]
 		env["RUN_OUTPUT_DIR"] = outDir
